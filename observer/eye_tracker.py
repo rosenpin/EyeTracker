@@ -37,7 +37,7 @@ class StateTracker:
         if time_diff > 300 and self._state == ChooseState.INITIAL:
             self._state = ChooseState.CHOOSE
             return EyeStateItem(eye_direction, self._state)
-        elif time_diff > 1 and self._state == ChooseState.NONE:
+        elif time_diff > 7 and self._state == ChooseState.NONE:
             self._state = ChooseState.INITIAL
             return EyeStateItem(eye_direction, self._state)
 
