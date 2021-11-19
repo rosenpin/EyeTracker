@@ -8,12 +8,8 @@ class ScreenPart(IntEnum):
     RIGHT = 6
     CENTER = 5
     LEFT = 4
-    TOP_LEFT = 1
     TOP_CENTER = 2
-    TOP_RIGHT = 3
-    BOTTOM_LEFT = 7
     BOTTOM_CENTER = 8
-    BOTTOM_RIGHT = 9
 
 
 class ChooseState(IntEnum):

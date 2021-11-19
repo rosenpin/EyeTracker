@@ -1,6 +1,7 @@
 from http.server import HTTPServer
 
 from eye_tracker import EyeTracker
+from observers.json_observer import JsonObserver
 from observers.http_server_observer import HttpObserver, HttpHandler
 from observers.print_observer import PrintObserver
 from observers.http_server_observer import http_observer
@@ -16,7 +17,8 @@ def main():
     t1.start()
 
     print_observer = PrintObserver()
-    eye_tracker = EyeTracker([print_observer, http_observer])
+    csv_observer = JsonObserver()
+    eye_tracker = EyeTracker([print_observer, http_observer, csv_observer])
     eye_tracker.run()
 
     t1.join()
