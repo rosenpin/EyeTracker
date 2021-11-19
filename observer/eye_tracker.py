@@ -98,6 +98,9 @@ class EyeTracker:
             else:
                 for o in self._observers:
                     o.trigger(result)
+                if result.choose_state == ChooseState.CHOOSE:
+                    print("sleeping after selection")
+                    time.sleep(5)
 
             #
             # if gaze.is_blinking():
