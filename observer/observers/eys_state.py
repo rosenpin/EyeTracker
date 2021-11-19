@@ -5,11 +5,11 @@ from dataclasses import dataclass
 
 class ScreenPart(IntEnum):
     NONE = 0
-    RIGHT = 6
+    RIGHT_HAND = 6
     CENTER = 5
-    LEFT = 4
-    TOP_CENTER = 2
-    BOTTOM_CENTER = 8
+    LEFT_HAND = 4
+    SHOULDERS = 2
+    PELVIS = 8
 
 
 class ChooseState(IntEnum):

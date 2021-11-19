@@ -62,14 +62,14 @@ class EyeTracker:
         #    return ScreenPart.BOTTOM_LEFT
 
         if gaze.is_center() and gaze.is_top():
-            return ScreenPart.TOP_CENTER
+            return ScreenPart.SHOULDERS
         elif gaze.is_center() and gaze.is_bottom():
-            return ScreenPart.BOTTOM_CENTER
+            return ScreenPart.PELVIS
 
         elif gaze.is_right():
-            return ScreenPart.RIGHT
+            return ScreenPart.RIGHT_HAND
         elif gaze.is_left():
-            return ScreenPart.LEFT
+            return ScreenPart.LEFT_HAND
         elif gaze.is_center():
             return ScreenPart.CENTER
 
