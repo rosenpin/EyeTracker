@@ -4,6 +4,7 @@ Check the README.md for complete documentation.
 """
 
 import cv2
+import time
 from gaze_tracking import GazeTracking
 from observers.eys_state import ScreenPart, ChooseState, EyeStateItem
 from datetime import datetime
@@ -14,7 +15,7 @@ class StateTracker:
         self._init_state()
 
     def _init_state(self):
-        self._prev_time = datetime.now()
+        self._prev_time = time.time()
         self._state = ChooseState.NONE
         self._prev_eye_direction = ScreenPart.NONE
 
@@ -23,18 +24,21 @@ class StateTracker:
         if eye_direction == None:
             eye_direction = self._prev_eye_direction
 
-        if eye_direction != self._prev_eye_direction or eye_direction == ScreenPart.NONE:
+        if (
+            eye_direction != self._prev_eye_direction
+            or eye_direction == ScreenPart.NONE
+        ):
             self._init_state()
             self._prev_eye_direction = eye_direction
             return EyeStateItem(ScreenPart.NONE, ChooseState.NONE)
 
-        time_diff = (datetime.now() - self._prev_time).microseconds
+        time_diff = time.time() * 100 - self._prev_time * 100
 
-        if time_diff > 200000 and self._state == ChooseState.NONE:
-            self._state = ChooseState.INITIAL
-            return EyeStateItem(eye_direction, self._state)
-        elif time_diff > 3000000 and self._state == ChooseState.INITIAL:
+        if time_diff > 300 and self._state == ChooseState.INITIAL:
             self._state = ChooseState.CHOOSE
+            return EyeStateItem(eye_direction, self._state)
+        elif time_diff > 1 and self._state == ChooseState.NONE:
+            self._state = ChooseState.INITIAL
             return EyeStateItem(eye_direction, self._state)
 
         self._prev_eye_direction = eye_direction
@@ -47,16 +51,32 @@ class EyeTracker:
         self._state_tracker = StateTracker()
 
     def _get_eye_direction_type(self, gaze):
-        if gaze.is_right():
+        # if gaze.is_right() and gaze.is_top():
+        #    return ScreenPart.TOP_RIGHT
+        # elif gaze.is_right() and gaze.is_bottom():
+        #    return ScreenPart.BOTTOM_RIGHT
+
+        # elif gaze.is_left() and gaze.is_top():
+        #    return ScreenPart.TOP_LEFT
+        # elif gaze.is_left() and gaze.is_bottom():
+        #    return ScreenPart.BOTTOM_LEFT
+
+        if gaze.is_center() and gaze.is_top():
+            return ScreenPart.TOP_CENTER
+        elif gaze.is_center() and gaze.is_bottom():
+            return ScreenPart.BOTTOM_CENTER
+
+        elif gaze.is_right():
             return ScreenPart.RIGHT
         elif gaze.is_left():
             return ScreenPart.LEFT
         elif gaze.is_center():
             return ScreenPart.CENTER
+
         elif gaze.is_blinking():
             return None
 
-        return ScreenPart.NONE
+        return None  # ScreenPart.NONE
 
     def run(self):
         gaze = GazeTracking()
@@ -92,7 +112,9 @@ class EyeTracker:
             #     text = "Looking center"
             #     print("Looking center")
 
-            cv2.putText(frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
+            cv2.putText(
+                frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2
+            )
 
             left_pupil = gaze.pupil_left_coords()
             right_pupil = gaze.pupil_right_coords()
