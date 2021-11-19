@@ -81,6 +81,8 @@ class EyeTracker:
     def run(self):
         gaze = GazeTracking()
         webcam = cv2.VideoCapture(0)
+        prev_time = 0
+
         while True:
             # We get A new frame from the webcam
             _, frame = webcam.read()
@@ -96,11 +98,14 @@ class EyeTracker:
             if result == None:
                 pass
             else:
-                for o in self._observers:
-                    o.trigger(result)
-                if result.choose_state == ChooseState.CHOOSE:
-                    print("sleeping after selection")
-                    time.sleep(5)
+                if prev_time != 0 and (datetime.now() - prev_time).seconds <= 5:
+                    prev_time = 0
+                else:
+                    for o in self._observers:
+                        o.trigger(result)
+                    if result.choose_state == ChooseState.CHOOSE:
+                        prev_time = datetime.now()
+
 
             #
             # if gaze.is_blinking():
